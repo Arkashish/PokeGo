@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import socketIOClient from "socket.io-client";
 import randomstring from "randomstring";
 
-const socket = socketIOClient('http://localhost:3000');
+const socket = socketIOClient('http://localhost:8000');
 
 export default function Battle({pokemon, battleId}) {
   const [battle, setBattle] = useState({
@@ -149,7 +149,7 @@ const VictoryStage = ({battle}) => {
 }
 
 export async function getServerSideProps({query}) {
-  const response = await fetch('http://localhost:3000/pokemon');
+  const response = await fetch('http://localhost:8000/pokemon');
   const data = await response.json();
   const pokemon = JSON.parse(JSON.stringify(data));
 

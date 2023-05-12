@@ -19,7 +19,7 @@ app.use(Express.urlencoded({ extended: true }));
 app.use(Cors());
 
 const mongoClient = new MongoClient(
-    "mongodb+srv://mongodb:mongodb@cluster0.tdm0q.mongodb.net/myFirstDatabase?retryWrites=true&w=majority", 
+    "mongodb+srv://pokemon:pokemon1234@cluster0.ekvb1mk.mongodb.net/?retryWrites=true&w=majority", 
     { 
         useUnifiedTopology: true 
     }
@@ -149,7 +149,7 @@ io.on("connection", (socket) => {
     
 });
 
-http.listen(3000, async () => {
+http.listen(8000, async () => {
     try {
         await mongoClient.connect();
         collections.battles = mongoClient.db("game").collection("battle");
@@ -161,7 +161,7 @@ http.listen(3000, async () => {
                 }
             }
         ], { fullDocument: "updateLookup" });
-        console.log("Listening on *:3000...");
+        console.log("Listening on *:8000...");
     } catch (ex) {
         console.error(ex);
     }
