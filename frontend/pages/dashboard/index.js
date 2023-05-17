@@ -33,17 +33,36 @@ export default function Dashboard() {
   }
 
   return (
-    <div class="main-body">
-      <div className="wrapper">
-        <h2 className="header-text">Dashboard</h2>
-        <div class="promo_card">
-          <h1 className="welcome-text">Welcome to Pokego</h1>
-          <span>Dashboard portal</span>
-        </div>
+    <div class="body-class">
 
-        <div class="history_lists">
-          <div class="list1">
-            <div className="user-profile-wrapper">
+      <header class="header-dash">
+        <div class="logo">
+          <a href="#">PokeGo</a>
+        </div>
+      </header>
+      <div class="container-dash">
+        <nav>
+          <div class="side_navbar">
+            <span>Main Menu</span>
+            <a href="#" class="active">Dashboard</a>
+            <a href="#">Edit Profile</a>
+            <button href="#" onClick={() => onLogout()}>Logout</button>
+          </div>
+        </nav>
+
+        <div class="main-body">
+          <h2 className="dashboard-text">Dashboard</h2>
+          <div class="promo_card">
+            <h1 className="welcome-text">Welcome to PokeGo</h1>
+            <span>Welcome digital warrior, fight your own battle in 1080p.</span>
+          </div>
+
+          <div class="history_lists">
+            <div class="list1">
+              <div class="row">
+                <h4 className="user-datails">User Details</h4>
+              </div>
+              <div className="user-profile-wrapper">
               <div className="user-wrapper">
                 <FaUserTie className="user-icon" />
               </div>
@@ -53,19 +72,33 @@ export default function Dashboard() {
               {
                 user && <p className="user-email">{user.email}</p>
               }
-              <button className="logout-btn" onClick={() => onLogout()}>Logout</button>
-              <a className="home-btn" href="/" >Home Page</a>
+             
             </div>
-          </div>
-          <div className="streak-wrapper">
-            <div className="streak-item-wrapper" >
-              {user && <h1 className="streak-item">Current streak : {" "}{user.logedCountPerDay}</h1>} 
             </div>
-            <div className="streak-item-wrapper" >
-              {user && <h1 className="streak-item">Max streak : {" "}{user.logedCount}</h1> }
+
+            <div class="list2">
+              <div class="row">
+                <h4>Streaks</h4>
+              </div>
+              <table className="dash-table">
+                <thead>
+                  <th>Maximum Streak </th>
+                  <th>Current Streak </th>
+                </thead>
+                <tr>
+                  <td>{user && <h1 className="streak-item">{user.logedCount}</h1> }</td>
+                  <td> {user && <h1 className="streak-item">{user.logedCountPerDay}</h1>}</td> 
+                </tr>
+
+              </table>
             </div>
           </div>
         </div>
+
+        <div class="sidebar">
+
+        </div>
+
       </div>
     </div>
   )
