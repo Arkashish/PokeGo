@@ -1,7 +1,37 @@
 import React, { useState, useEffect } from "react";
+import { useRouter } from "next/router";
+import { toast } from "react-toastify";
 
 export default function Home() {
   const [battleId, setBattleId] = useState("");
+  const router = useRouter();
+
+ const onLogout = () =>{
+
+  localStorage.removeItem("auth");
+  router.push('/login');
+
+  toast.success(`😃 Logout successfully!`, {
+    position: "top-center",
+    autoClose: 2000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+    theme: "colored",
+  });
+ }
+
+ useEffect(() => {
+  var user=localStorage.getItem("auth");
+  if(user){
+    router.push('/');
+  }else{
+    router.push('/login');
+  }
+}, []);
+  
   return (
     <div className="bg-blue-100 h-screen">
       <nav>
@@ -11,8 +41,9 @@ export default function Home() {
           <div className="w-1/4">
             <ul className=" p-6 m-2">
               <li>
-                <a href="/">User Profile  </a>
-                <a href="https://pokegoshop.netlify.app/">PokeGoCart</a>
+                <a className="m-2" href="/dashboard">User Profile  </a>
+                <a className="m-2" href="https://pokegoshop.netlify.app/">PokeGoCart</a>
+                <button className="m-2" onClick={()=>onLogout()}>Logout</button>
               </li>
             </ul>
           </div>

@@ -3,6 +3,7 @@ const Express = require("express");
 const Cors = require("cors");
 
 const app = Express();
+const  { hash,compare } =require("bcryptjs")
 
 const http = require("http").Server(app);
 const io = require('socket.io')(http, {
@@ -35,6 +36,76 @@ app.get("/pokemon", async (request, response) => {
     } catch (e) {
         response.status(500).send({ message: e.message });
     }
+});
+
+app.post("/signup", async (req, res) => {
+  const {email,username,password}=req.body;
+
+  try {
+    let user = await collections.signup.find({email:email}).toArray();
+    if(user){
+      if(user.length>0){
+        res.status(200).send({ message: "user already exists",success:false });
+      }else{
+        const hashedPassword = await hash(password, 12);
+        let new_user={
+          email:email,
+          password:hashedPassword,
+          username:username,
+          logedCount:1,
+          logedCountPerDay:1,
+          lastLogedTime: new Date(),
+        }
+        let newuser = await collections.signup.insertOne(new_user);
+        if(newuser){
+          res.status(200).send({ message: "Registered successfully",user:new_user,success:true  });
+        }
+      }
+    }
+} catch (e) {
+  res.status(500).send({ message: e.message });
+}
+});
+
+app.post("/signin", async (req, res) => {
+  const {email,password}=req.body;
+
+  try {
+    let user = await collections.signup.find({email:email}).toArray();
+    if(user){
+      if(user.length==0){
+        res.status(200).send({ message: "User not available",success:false });
+      }else{
+        const isPasswordCorrect = await compare(password, user[0].password);
+        if(isPasswordCorrect){
+
+          var today = new Date();
+          var lastLoginDate = new Date(user[0].lastLogedTime);
+          var currentStreak=0;
+
+          if (lastLoginDate.getDate() === today.getDate() &&
+            lastLoginDate.getMonth() === today.getMonth() &&
+            lastLoginDate.getFullYear() === today.getFullYear()) {
+            currentStreak = user[0].logedCountPerDay + 1;
+          } 
+
+          let updadtedUser = await collections.signup.updateOne({_id:user[0]._id},{$set:{logedCount:user[0].logedCount+1, lastLogedTime:new Date(),logedCountPerDay:currentStreak}});
+          if(updadtedUser){
+            user[0].logedCount=user[0].logedCount+1;
+            user[0].lastLogedTime=new Date();
+            user[0].logedCountPerDay=currentStreak;
+            res.status(200).send({ message: "Login successfully", user:user[0],success:true  });
+          }
+          
+        }else{
+          res.status(400).send({ message: "Password not matched",success:false});
+        }
+        
+      }
+    }
+} catch (e) {
+  res.status(500).send({ message: e.message });
+}
 });
 
 
@@ -154,6 +225,7 @@ http.listen(8000, async () => {
         await mongoClient.connect();
         collections.battles = mongoClient.db("game").collection("battle");
         collections.pokemon = mongoClient.db("game").collection("pokemon");
+        collections.signup = mongoClient.db("game").collection("signup");
         changesBattles = collections.battles.watch([
             {
                 "$match": {
